@@ -1,4 +1,4 @@
-#!/usr/php/54/usr/bin/php -qc/home1/rushroad/public_html/php.ini
+#!/usr/bin/env php
 <?php
 //echo "Filename is:".__FILE__."\n";
 error_reporting(-1);
