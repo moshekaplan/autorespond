@@ -76,18 +76,10 @@ if (!isset($_POST) && isset($HTTP_POST_VARS)) {
 }
 
 
-$listid = 3;
+$listid = 3; // ugly hardcoded listvar that users subscribe/unsubscribe to
 
-    
 // https://code.google.com/p/php-mime-mail-parser/
 require_once('MimeMailParser.class.php');
-
-//$fd = fopen("php://stdin", "r");
-//$Parser->setStream($fd);
-//$path = 'email.txt';
-//$Parser->setPath($path);
-//$email = file_get_contents('email.txt');
-
 
 
 $Parser = new MimeMailParser();
