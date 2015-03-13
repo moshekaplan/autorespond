@@ -16,20 +16,6 @@ ob_start();
 require_once dirname(__FILE__) .'/admin/commonlib/lib/unregister_globals.php';
 require_once dirname(__FILE__) .'/admin/commonlib/lib/magic_quotes.php';
 
-## none of our parameters can contain html for now
-$_GET = removeXss($_GET);
-$_POST = removeXss($_POST);
-$_REQUEST = removeXss($_REQUEST);
-$_SERVER = removeXss($_SERVER);
-$_COOKIE = removeXss($_COOKIE);
-
-## remove a trailing punctuation mark on the uid
-if (isset($_GET['uid'])) {
-  if (preg_match('/[\.,:;]$/',$_GET['uid'])) {
-    $_GET['uid'] = preg_replace('/[\.,:;]$/','',$_GET['uid']);
-  }
-}
-
 if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
   include $_SERVER["ConfigFile"];
 } elseif (is_file("config/config.php")) {
@@ -81,7 +67,6 @@ $listid = 3; // ugly hardcoded listvar that users subscribe/unsubscribe to
 // https://code.google.com/p/php-mime-mail-parser/
 require_once('MimeMailParser.class.php');
 
-
 $Parser = new MimeMailParser();
 $Parser->setText($data);
 
@@ -99,7 +84,7 @@ else if (strpos(strtoupper($subject), "SUBSCRIBE") !== false || strpos(strtouppe
     $action = "subscribe";
 }
 else{
-    sendMail($email, "Error", "Either send a message with 'subscribe' or 'unsubscribe' in it.", system_messageheaders($email));
+    //sendMail($email, "Error", "Either send a message with 'subscribe' or 'unsubscribe' in it.", system_messageheaders($email));
 }
 
 function subscribeEmail($email, $listid){
@@ -113,8 +98,8 @@ function subscribeEmail($email, $listid){
         $result = Sql_fetch_array($result);
         $userid = $result["id"];
         // In case the user had been blacklisted - From admin\commonlib\lib\userlib.php: function unBlackList
-        Sql_Query(sprintf('delete from %s where email = "%s"', $GLOBALS["tables"]["user_blacklist"],$email));
-        Sql_Query(sprintf('delete from %s where email = "%s"', $GLOBALS["tables"]["user_blacklist_data"],$email));
+        Sql_Query(sprintf('delete from %s where email = "%s"', $GLOBALS["tables"]["user_blacklist"],sql_escape($email)));
+        Sql_Query(sprintf('delete from %s where email = "%s"', $GLOBALS["tables"]["user_blacklist_data"],sql_escape($email)));
         Sql_Query(sprintf('update %s set blacklisted = 0 where id = %d',$GLOBALS["tables"]["user"],$userid));
     }
     # they do not exist, so add them
